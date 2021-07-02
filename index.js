@@ -185,8 +185,8 @@ app.put('/api/pessoas/:id', (request, response) => {
              parametroValido(meta) && parametroValido(meta) ) )
         return response.status(400).json({erro: 'Parâmetros inválidos'});
 
-    if ( ! CpfEhValido(cpf) ) 
-    return response.status(400).json({erro: 'CPF inválido'});
+    if ( ! cpfValidator(cpf) ) 
+        return response.status(400).json({erro: 'CPF inválido'});
 
     let indicePessoa=-1;
     for ( indicePessoa = 0; indicePessoa < repositorioPessoas.length; indicePessoa++ ) {
