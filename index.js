@@ -1,6 +1,9 @@
 const express = require('express');
 const helmet = require('helmet');
 require('dotenv').config()
+const validator = require('cpf-cnpj-validator');
+const cpfValidator = validator.cnpj;
+
 
 // Variável global que simula dum repositório de pessoas e receitas
 const repositorioPessoas = [];
@@ -151,11 +154,18 @@ app.get('/api/pessoas/:id', (request, response) => {
 
 
 app.post('/api/pessoas', (request, response) => {
+
+    if (! request.body )
+        return response.status(400).json({erro: 'Parâmetros inválidos'});
+
     const {nome, dataNascimento, cpf, ativo, meta} = request.body;
 
     if (! (  parametroValido(nome) &&  parametroValido(dataNascimento) && 
              parametroValido(meta) && parametroValido(meta) ) )
         return response.status(400).json({erro: 'Parâmetros inválidos'});
+
+    if ( ! cpfValidator(cpf))
+        return response.status(400).json({erro: 'CPF inválido'});
 
     const pessoa = new Pessoa( proximoIdPessoa(), nome, dataNascimento, cpf, ativo, meta);
     repositorioPessoas.push(pessoa)
@@ -219,6 +229,10 @@ app.get('/api/receitas/:id', (request, response) => {
 
 
 app.post('/api/receitas', (request, response) => {
+
+    if (! request.body )
+        return response.status(400).json({erro: 'Parâmetros inválidos'});
+
     const {pessoaid, data, deposito} = request.body;
 
     if (! (  parametroValido(pessoaid) &&  parametroValido(data) && 
